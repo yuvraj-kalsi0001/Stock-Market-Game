@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="login.css">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <script src="jquery-3.7.1.js"></script>
+
+</head>
+
+<body>
+    <form action="/login" method="post" id="loginForm">
+        
+      
+        <div class="container">
+          <label class="heading" for="uname"><b>Username</b></label>
+          <input type="text" placeholder="Enter Username" name="uname" id="uname" required>
+      
+          <label class="heading" for="psw"><b>Password</b></label>
+          <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+      
+          <button type="submit">Login</button>
+          <div id="failedLogin" style="font-size:20px; color: red; display:none;">
+            <p>Invalid credentials, Please try again</p>
+          </div>
+
+          <hr>
+          <div class="container signin">
+            <p>Do not have an account? <a href="register.html">Register</a>.</p>
+          </div>
+          
+        </div>
+      </form> 
+
+      <script>
+        $(document).ready(function () {
+          var loginForm = $("#loginForm");
+          var failedLogin = $("#failedLogin");
+          
+          loginForm.on("submit", function (event) {
+            event.preventDefault();
+            $.ajax({
+              url: "/login",
+              method: "POST",
+              contentType: "application/json",
+              data: JSON.stringify({
+                uname: $("#uname").val(),
+                psw: $("#psw").val()
+              }),
+              success: function(data) {
+                // console.log(data.status)
+                if (data.status == 200) {
+                  window.location.href = "/user";
+                }
+              },
+              error: function (error) {
+                // console.log(error.status)
+                // console.error('Error:', error);
+                if (error.status === 404) {
+                  failedLogin.show();  // Show the "Invalid credentials" message
+                }
+              }
+            });
+          });
+        });
+      </script>
+
+</body>
+
+</html>

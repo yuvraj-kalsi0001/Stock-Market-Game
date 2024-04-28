@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="register.css">
+    <link
+        href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900italic,900'
+        rel='stylesheet' type='text/css'>
+    <script src="jquery-3.7.1.js"></script>
+</head>
+
+<body>
+
+
+    <form action="/register" method="post" id="registerForm">
+        <div class="container">
+            <h1>Register</h1>
+            <p>Create an account.</p>
+            <hr>
+
+            <label for="uname"><b>Username</b></label>
+            <input type="text" placeholder="Enter Username" name="uname" id="uname" required>
+
+            <label for="psw"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+
+            <label for="psw-repeat"><b>Repeat Password</b></label>
+            <input type="password" placeholder="Repeat Password" name="psw_repeat" id="psw_repeat" required>
+            <hr>
+
+            <label for="game"><b>Game Name</b></label>
+            <input type="text" placeholder="Enter game name" name="gName" id="gName">
+            <hr>
+
+            <button type="submit" class="registerbtn">Register</button>
+        </div>
+
+        <div id="registrationSuccess" style="display:none;">
+            <p>Registration successful!</p>
+            <p>Please <a href="login.html">login here</a>.</p>
+        </div>
+        </div>
+
+        <div class="container signin">
+            <p>Already have an account? <a href="login.html">Sign in</a>.</p>
+        </div>
+    </form>
+
+
+    <script>
+        $(document).ready(function () {
+            var password = $("#psw"),
+                confirm_password = $("#psw_repeat"),
+                registerForm = $("#registerForm"),
+                registrationSuccess = $("#registrationSuccess");
+            container = $('.container')
+
+            // console.log($('#psw').val())
+
+            function validatePassword() {
+                if (password.val() != confirm_password.val()) {
+                    confirm_password[0].setCustomValidity("Passwords Don't Match");
+                } else {
+                    confirm_password[0].setCustomValidity('');
+                }
+            }
+
+            password.on("change", validatePassword);
+            confirm_password.on("keyup", validatePassword);
+
+            registerForm.on("submit", function (event) {
+                event.preventDefault(); // Prevent the form from submitting normally
+
+                var admin = false;
+                if ($('#psw').val() === 'admin') { admin = true; }
+
+
+                $.ajax({
+                    url: "/register",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        uname: $("#uname").val(),
+                        psw: $("#psw").val(),
+                        gameName: $("#gName").val(),
+                        adminInput: admin
+                    }),
+                    success: function (data) {
+                        // console.log("Data sent in AJAX request:", JSON.stringify({
+                        //     uname: $("#uname").val(),
+                        //     psw: $("#psw").val(),
+                        //     gameName: $("#gName").val(),
+                        //     adminInput: admin
+                        // }));
+                        // console.log('laa')
+                        if (data.status == 201) {
+                            registrationSuccess.show();
+                            container.hide();
+                        } else {
+                            alert("Registration failed: " + data.message);
+                        }
+                    },
+                    error: function (error) {
+                        // console.log(error)
+                        alert("Registration failed: " + error.responseJSON.message);
+                    }
+                });
+            });
+        });
+    </script>
+
+
+</body>
+
+</html>

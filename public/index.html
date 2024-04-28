@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+        href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900italic,900'
+        rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="index.css">
+    <title>Homepage</title>
+
+</head>
+
+<body>
+    <div>
+        <h1>Welcome!</h1>
+
+        <p>Select Login if you already have an account</p>
+        <button onclick="redirectTo('login')">Login</button>
+
+        <p>Select Register if you want to register for a new account</p>
+        <button onclick="redirectTo('register')">Register</button>
+
+        <p>Select Admin if you are admin</p>
+        <button onclick="redirectTo('admin')">Admin</button>
+    </div>
+
+
+    <script>
+        function redirectTo(page) {
+            switch (page) {
+                case 'login':
+                    window.location.href = 'login.html';
+                    break;
+                case 'register':
+                    window.location.href = 'register.html';
+                    break;
+                case 'admin':
+                    window.location.href = 'admin.html';
+                    break;
+                default:
+                    alert('Invalid option');
+                    break;
+            }
+        }
+    </script>
+
+</body>
+
+</html>

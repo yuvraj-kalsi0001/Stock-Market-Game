@@ -1,0 +1,16 @@
+#logout-button {
+    position: absolute; 
+    top: 10px;
+    right: 10px;
+    background-color: #459fe9; 
+    color: #ffffff; 
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    z-index: 999; /* Ensures the button is above other content */
+}

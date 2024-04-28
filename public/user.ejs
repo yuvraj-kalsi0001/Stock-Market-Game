@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Information</title>
+    <link rel="stylesheet" href="user.css">
+    
+    <link
+        href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900italic,900'
+        rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+    <div class="container" data-username="<%= session.username %>">
+        <div class="user-info">
+
+            <p><span class="label">Username:</span>
+                <%= user.userName %>
+            </p>
+            <p><span class="label">Balance: $</span>
+                <%= user.balance %>
+            </p>
+            <p><span class="label">Stocks List:</span>
+                <hr>
+                <% for(let stock in user.stocks) { %>
+
+                    <%= stock %> : <%= user.stocks[stock] %>
+            </p>
+            <% } %>
+                <hr>
+
+                <p><span class="label">Game Name:</span>
+                    <%= user.gameName %>
+                </p>
+
+                <!-- Buy Button -->
+                <button onclick="buyStock()">Buy Stock</button>
+
+                <!-- Sell Button -->
+                <button onclick="sellStock()" id="sell">Sell Stock</button>
+
+                <button onclick="viewOpponentPortfolio()">View Opponent's Portfolio</button>
+                
+                <!-- this is the table showing all the history of the player -->
+
+                <button id="history-btn" onclick="showHistory()">Show History</button>
+                <div id="history" class="hidden">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
+                                <th>Action</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% user.history.forEach(function(historyItem) { %>
+                                <tr>
+                                    <td>
+                                        <%= historyItem.symbol %>
+                                    </td>
+                                    <td>
+                                        <%= historyItem.action %>
+                                    </td>
+                                    <td>
+                                        <%= historyItem.quantity %>
+                                    </td>
+                                    <td>
+                                        <%= historyItem.price %>
+                                    </td>
+                                    <td>
+                                        <%= new Date(historyItem.timestamp).toLocaleString() %>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+
+        </div>
+        
+        
+        <!-- TradingView Widget BEGIN -->
+        <div class="tradingview-widget-container" style="height:100%;width:100%">
+            <button id="logout-button">logout</button>
+            <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+
+            <script type="text/javascript"
+                src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+                    {
+                        "autosize": true,
+                            "symbol": "NASDAQ:AAPL",
+                                "interval": "D",
+                                    "timezone": "Etc/UTC",
+                                        "theme": "dark",
+                                            "style": "1",
+                                                "locale": "en",
+                                                    "enable_publishing": false,
+                                                        "allow_symbol_change": true,
+                                                            "calendar": false,
+                                                                "support_host": "https://www.tradingview.com"
+                    }
+
+                </script>
+        </div> -->
+    </div>
+    <!-- TradingView Widget END -->
+</body>
+
+</html>
+<script src="user.js"></script>

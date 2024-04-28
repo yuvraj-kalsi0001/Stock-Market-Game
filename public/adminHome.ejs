@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Interface</title>
+    <link rel="stylesheet" href="adminHome.css">
+    <script src="jquery-3.7.1.js"></script>
+</head>
+
+<body>
+
+    <div class="container">
+        <button id="logout-button">logout</button>
+        <div class="admin-header">
+            <h1>Welcome, <%= adminName %>
+            </h1>
+        </div>
+
+
+
+        <!-- Games List -->
+        <div class="games-list">
+            <h2>Games</h2>
+            <ul>
+                <% games.forEach(function(game) { %>
+                    <li>
+                        <strong>Game Name:</strong>
+                        <%= game.gameName %><br>
+                            <strong>Players in game:</strong>
+                            <ul>
+                                <% for (let player in game.players) { %>
+                                    <li>
+                                        <%= game.players[player] %>
+                                    </li>
+                                    <% } %>
+                            </ul>
+                    </li>
+                    <% }); %>
+            </ul>
+        </div>
+
+
+        <!-- Create Game Form -->
+        <div class="create-game-form">
+            <h2>Create New Game</h2>
+            <form action="/createGame" method="post">
+                <label for="userName">Confirm Admin Name:</label>
+                <input type="text" id="userName" name="userName" required><br>
+
+                <label for="gameName">Game Name:</label>
+                <input type="text" id="gameName" name="gameName" required><br>
+
+                <button type="submit">Create Game</button>
+            </form>
+        </div>
+
+
+        <!-- Players Table -->
+        <div class="players-list">
+            <h2>Players</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Balance</th>
+                        <th>Action</th>
+                        <hr>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% players.forEach(function(player) { %>
+                        <tr>
+                            <td>
+                                <%= player.userName %>
+                            </td>
+                            <td>
+                                <%= player.balance %>
+                            </td>
+                            <td>
+                                <button onclick="viewPlayerInfo('<%= player._id %>')">View Info</button>
+                                <button onclick="changeBalanceForm('<%= player.userName %>')">Change Balance</button>
+                                <div id="playerInfo_<%= player._id %>" class="player-info" style="display:none;">
+                                    <hr>
+                                    <p><strong>Username:</strong>
+                                        <%= player.userName %>
+                                    </p>
+
+                                    <p><strong>Balance:</strong>
+                                        <%= player.balance %>
+                                    </p>
+
+                                    <!-- Display Stocks -->
+                                    <p><strong>Stocks:</strong></p>
+                                    <ul>
+                                        <% for(let stock in player.stocks) { %>
+                                            <li>
+                                                <%= stock %> : <%= player.stocks[stock] %>
+                                            </li>
+                                            <% } %>
+                                    </ul>
+
+                                    <p><strong>Game Name:</strong>
+                                        <%= player.gameName %>
+                                    </p>
+
+                                    <!-- Display History -->
+                                    <p><strong>History:</strong></p>
+                                    <ul>
+                                        <% player.history.forEach(function(item) { %>
+                                            <li>
+                                                Action: <%= item.action %>,
+                                                    Quantity: <%= item.quantity %>,
+                                                        Timestamp: <%= item.timestamp %>,
+                                                            Price: <%= item.price %>,
+                                                                Symbol: <%= item.symbol %>
+
+                                            </li>
+                                            <% }); %>
+                                    </ul>
+
+                                    <p><strong>Admin:</strong>
+                                        <%= player.adminInput %>
+                                    </p>
+
+                                    <p><strong>Currently Playing:</strong>
+                                        <%= player.currentlyPlaying %>
+                                    </p>
+
+
+                                </div>
+                                <hr>
+                            </td>
+
+                        </tr>
+
+                        <% }); %>
+                </tbody>
+            </table>
+        </div>
+
+
+
+
+        <!-- Change Balance Form -->
+        <div class="change-balance-form" style="display:none;">
+            <h2>Change Player Balance</h2>
+            <form id="changeBalanceForm">
+                <label for="adminUsername">Admin Username:</label>
+                <input type="text" id="adminUsername" name="adminUsername" required><br>
+
+                <label for="playerUsername">Player Username:</label>
+                <input type="text" id="playerUsername" name="playerUsername" required><br>
+
+                <label for="newBalance">New Balance:</label>
+                <input type="number" id="newBalance" name="newBalance" required><br>
+
+                <button type="button" onclick="submitChangeBalance()">Change Balance</button>
+            </form>
+        </div>
+
+        <script>
+            function viewPlayerInfo(playerId) {
+                var playerInfoDiv = document.getElementById("playerInfo_" + playerId);
+                if (playerInfoDiv.style.display === "none" || playerInfoDiv.style.display === "") {
+                    playerInfoDiv.style.display = "block";
+                } else {
+                    playerInfoDiv.style.display = "none";
+                }
+            }
+
+            function changeBalanceForm(playerUsername) {
+                var formDiv = document.querySelector('.change-balance-form');
+                formDiv.style.display = "block";
+
+                // Set the player username in the form
+                document.getElementById('playerUsername').value = playerUsername;
+            }
+
+            function submitChangeBalance() {
+                var adminUsername = document.getElementById('adminUsername').value;
+                var playerUsername = document.getElementById('playerUsername').value;
+                var newBalance = document.getElementById('newBalance').value;
+
+                // AJAX call to changeBalance route
+                $.ajax({
+                    url: "/changeBalance",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        userName1: adminUsername,
+                        userName2: playerUsername,
+                        newBalance: newBalance
+                    }),
+                    success: function (data) {
+                        // Handle success
+                        alert(data.message);
+                        // You can also update the balance displayed on the page if needed
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                        alert("Error changing balance.");
+                    }
+                });
+
+                // Hide the form after submission
+                document.querySelector('.change-balance-form').style.display = "none";
+            }
+        </script>
+
+
+
+
+    </div>
+
+    <script>
+        function viewPlayerInfo(playerId) {
+            var playerInfoDiv = document.getElementById("playerInfo_" + playerId);
+            if (playerInfoDiv.style.display === "none" || playerInfoDiv.style.display === "") {
+                playerInfoDiv.style.display = "block";
+            } else {
+                playerInfoDiv.style.display = "none";
+            }
+        }
+    </script>
+</body>
+
+</html>
+<script src="adminHome.js"></script>
